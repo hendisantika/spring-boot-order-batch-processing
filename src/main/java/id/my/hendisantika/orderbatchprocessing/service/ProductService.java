@@ -63,4 +63,18 @@ public class ProductService {
         //kafka events
         publishProductEvent(product);
     }
+
+    private void updateDiscountedPrice(Product product) {
+        double price = product.getPrice();
+
+        int discountPercentage = (price >= 1000) ? 10 : (price > 500 ? 5 : 0);
+
+        double priceAfterDiscount = price - (price * discountPercentage / 100);
+
+        if (discountPercentage > 0) {
+            product.setOfferApplied(true);
+        }
+        product.setDiscountPercentage(discountPercentage);
+        product.setPriceAfterDiscount(priceAfterDiscount);
+    }
 }
