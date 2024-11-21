@@ -1,6 +1,7 @@
 package id.my.hendisantika.orderbatchprocessing.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import id.my.hendisantika.orderbatchprocessing.entity.Product;
 import id.my.hendisantika.orderbatchprocessing.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,5 +45,22 @@ public class ProductService {
     public void processProductIds(List<Long> productIds) {
         productIds.parallelStream()
                 .forEach(this::fetchUpdateAndPublish);
+    }
+
+    private void fetchUpdateAndPublish(Long productId) {
+        //fetch product by id
+        Product product = repository.findById(productId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Product ID does not exist in the system")
+                );
+
+        //update discount properties
+        updateDiscountedPrice(product);
+
+        //save to DB
+        repository.save(product);
+
+        //kafka events
+        publishProductEvent(product);
     }
 }
