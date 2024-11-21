@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -113,5 +114,22 @@ public class ProductServiceV2 {
                 .stream()
                 .map(Product::getId)
                 .collect(Collectors.toList());
+    }
+
+    //batch List<Long> 1-50 , 2-100  ..
+    private List<List<Long>> splitIntoBatches(List<Long> productIds, int batchSize) {
+        int totalSize = productIds.size();
+        //300 - 100 -> 3
+        int batchNums = (totalSize + batchSize - 1) / batchSize;
+        //calculate number of batch
+        List<List<Long>> batches = new ArrayList<>();
+
+        for (int i = 0; i < batchNums; i++) {
+            int start = i * batchSize;// 0 , 51 ,100
+            int end = Math.min(totalSize, (i + 1) * batchSize);// 50 , 100
+            batches.add(productIds.subList(start, end));
+        }
+
+        return batches;
     }
 }
