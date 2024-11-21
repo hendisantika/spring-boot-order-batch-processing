@@ -1,5 +1,6 @@
 package id.my.hendisantika.orderbatchprocessing.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.my.hendisantika.orderbatchprocessing.entity.Product;
 import id.my.hendisantika.orderbatchprocessing.repository.ProductRepository;
@@ -76,5 +77,14 @@ public class ProductService {
         }
         product.setDiscountPercentage(discountPercentage);
         product.setPriceAfterDiscount(priceAfterDiscount);
+    }
+
+    private void publishProductEvent(Product product) {
+        try {
+            String productJson = objectMapper.writeValueAsString(product);
+            kafkaTemplate.send(topicName, productJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to convert product to JSON", e);
+        }
     }
 }
