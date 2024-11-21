@@ -3,6 +3,7 @@ package id.my.hendisantika.orderbatchprocessing.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.my.hendisantika.orderbatchprocessing.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * Time: 05.43
  * To change this template use File | Settings | File Templates.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceV2 {
@@ -57,6 +59,11 @@ public class ProductServiceV2 {
 
         //wait for all future to complete
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
     }
+
+    private void processProductIds(List<Long> batch) {
+        log.info("Processing batch {} by thread {}", batch, Thread.currentThread().getName());
+        batch.forEach(this::fetchUpdateAndPublish);
+    }
+
 }
