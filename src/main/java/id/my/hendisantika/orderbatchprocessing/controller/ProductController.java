@@ -49,4 +49,10 @@ public class ProductController {
         productService.processProductIds(productIds);
         return ResponseEntity.ok("Products processed and events published.");
     }
+
+    @PostMapping("/process/v2")
+    public ResponseEntity<String> processProductIdsV2(@RequestBody List<Long> productIds) {
+        productServiceV2.executeProductIds(productIds);
+        return ResponseEntity.ok("Products processed and events published.");
+    }
 }
