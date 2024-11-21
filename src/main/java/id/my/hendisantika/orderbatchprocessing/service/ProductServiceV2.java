@@ -32,4 +32,14 @@ public class ProductServiceV2 {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(6);
 
+    public String resetRecords() {
+        repository.findAll()
+                .forEach(product -> {
+                    product.setOfferApplied(false);
+                    product.setPriceAfterDiscount(product.getPrice());
+                    product.setDiscountPercentage(0);
+                    repository.save(product);
+                });
+        return "Data Reset to DB";
+    }
 }
