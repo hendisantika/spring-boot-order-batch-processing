@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA.
@@ -86,5 +87,12 @@ public class ProductService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to convert product to JSON", e);
         }
+    }
+
+    public List<Long> getProductIds() {
+        return repository.findAll()
+                .stream()
+                .map(Product::getId)
+                .collect(Collectors.toList());
     }
 }
