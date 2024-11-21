@@ -21,7 +21,6 @@ public class KafkaConfig {
     @Value("${product.discount.update.topic}")
     private String topicName;
 
-
     @Bean
     public NewTopic createTopic() {
         return new NewTopic(topicName, 3, (short) 1);

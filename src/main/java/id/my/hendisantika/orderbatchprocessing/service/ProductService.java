@@ -30,7 +30,7 @@ public class ProductService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     @Value("${product.discount.update.topic}")
-    private final String topicName;
+    private String topicName;
 
     public String resetRecords() {
         repository.findAll()
