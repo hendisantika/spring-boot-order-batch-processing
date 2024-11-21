@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,5 +44,19 @@ public class ProductServiceV2 {
                     repository.save(product);
                 });
         return "Data Reset to DB";
+    }
+
+    public void executeProductIds(List<Long> productIds) {
+        List<List<Long>> batches = splitIntoBatches(productIds, 50);
+
+        List<CompletableFuture<Void>> futures = batches
+                .stream()
+                .map(
+                        batch -> CompletableFuture.runAsync(() -> processProductIds(batch), executorService))
+                .collect(Collectors.toList());
+
+        //wait for all future to complete
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
     }
 }
