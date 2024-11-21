@@ -26,5 +26,14 @@ public class ProductService {
     @Value("${product.discount.update.topic}")
     private final String topicName;
 
-
+    public String resetRecords() {
+        repository.findAll()
+                .forEach(product -> {
+                    product.setOfferApplied(false);
+                    product.setPriceAfterDiscount(product.getPrice());
+                    product.setDiscountPercentage(0);
+                    repository.save(product);
+                });
+        return "Data Reset to DB";
+    }
 }
