@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,5 +38,11 @@ public class ProductService {
                     repository.save(product);
                 });
         return "Data Reset to DB";
+    }
+
+    @Transactional
+    public void processProductIds(List<Long> productIds) {
+        productIds.parallelStream()
+                .forEach(this::fetchUpdateAndPublish);
     }
 }
