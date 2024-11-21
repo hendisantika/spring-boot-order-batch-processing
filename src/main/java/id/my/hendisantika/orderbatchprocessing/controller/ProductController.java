@@ -3,8 +3,12 @@ package id.my.hendisantika.orderbatchprocessing.controller;
 import id.my.hendisantika.orderbatchprocessing.service.ProductService;
 import id.my.hendisantika.orderbatchprocessing.service.ProductServiceV2;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,5 +29,9 @@ public class ProductController {
 
     private final ProductServiceV2 productServiceV2;
 
-
+    //this endpoint for testing
+    @GetMapping("/ids")
+    public ResponseEntity<List<Long>> getIds() {
+        return ResponseEntity.ok(productService.getProductIds());
+    }
 }
