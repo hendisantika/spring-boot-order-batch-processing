@@ -1,7 +1,5 @@
 package id.my.hendisantika.orderbatchprocessing.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import id.my.hendisantika.orderbatchprocessing.entity.Product;
 import id.my.hendisantika.orderbatchprocessing.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +104,7 @@ public class ProductServiceV2 {
         try {
             String productJson = objectMapper.writeValueAsString(product);
             kafkaTemplate.send(topicName, productJson);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException("Failed to convert product to JSON", e);
         }
     }
